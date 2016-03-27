@@ -1,0 +1,5 @@
+[riemann]
+vagrant_riemann_0 ansible_ssh_host=33.33.33.30 ansible_ssh_port=22
+
+[db]
+vagrant_riemann_1 ansible_ssh_host=33.33.33.31 ansible_ssh_port=22

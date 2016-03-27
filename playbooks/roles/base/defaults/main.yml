@@ -1,0 +1,10 @@
+---
+
+update_cache: yes
+cache_valid_time: 3600
+source_packages: "/home/{{ application_user }}/sources"
+base_packages:
+    - language-pack-pt
+    - unzip
+    - git
+    - curl

@@ -1,0 +1,12 @@
+---
+
+- name: Install Base Packages in Ubuntu
+  apt: pkg={{ item }} state=latest update_cache={{ update_cache }} cache_valid_time={{ cache_valid_time }}
+  when: base_packages is defined
+  with_items: "{{ base_packages }}"
+
+
+- name: Add Developers Public Keys
+  authorized_key: user="{{ item.user }}" key="{{ item.key }}"
+  when: ssh_keys is defined
+  with_items: "{{ ssh_keys }}"

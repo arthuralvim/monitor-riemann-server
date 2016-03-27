@@ -1,0 +1,4 @@
+---
+
+inventory_path: "{{ inventory_dir }}"
+project_path: "{{ lookup('env','PWD') }}"

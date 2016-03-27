@@ -1,0 +1,12 @@
+---
+
+# Role on galaxy
+# - you.rolename
+
+# Public role on github
+# - name: role-public
+#   src: https://github.com/erasme/role-public.git
+
+# Private role on github
+# - name: role-private
+#   src: git+ssh://git@github.com/you/role-private.git

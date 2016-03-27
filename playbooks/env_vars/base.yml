@@ -1,0 +1,4 @@
+---
+
+application_user: 'vagrant'
+application_group: 'vagrant'

@@ -60,3 +60,13 @@ target/
 
 #Ipython Notebook
 .ipynb_checkpoints
+
+# Vagrant
+*.vagrant
+
+# Ansible
+*.retry
+
+# Project
+*.env
+*.todo

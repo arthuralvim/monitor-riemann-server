@@ -1,0 +1,6 @@
+# {{ ansible_managed }}
+
+set :port, {{ riemann_dash_port }}
+set :bind, "{{ riemann_dash_ip }}"
+
+config.store[:ws_config] = "{{ riemann_dash_path }}/config.json"

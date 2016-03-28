@@ -1,0 +1,171 @@
+---
+
+- name: Ensure Riemann directory exists
+  become_user: "{{ application_user }}"
+  file: path={{ item }}
+        state=directory
+        group={{ application_group }}
+        owner={{ application_user }}
+        mode=0755
+  with_items:
+    - "{{ riemann_path }}"
+    - "{{ riemann_path_log }}"
+    - "{{ riemann_path_pid }}"
+  tags:
+    - riemann
+    - riemann-dash
+    - riemann-health
+
+- name: Check if Riemann's .deb already exist.
+  stat: path={{ riemann_deb }}
+  register: deb_exists
+  tags:
+    - riemann
+    - riemann-dash
+
+- name: Download Riemann 0.2.8
+  get_url: url={{ riemann_url }} dest={{ riemann_deb }}
+  when: not deb_exists.stat.exists
+  tags:
+    - riemann
+    - riemann-dash
+
+- name: Install Riemann Packages
+  apt: pkg={{ item }} state=latest update_cache={{ update_cache }} cache_valid_time={{ cache_valid_time }}
+  with_items: "{{ riemann_packages }}"
+  tags:
+    - riemann
+    - riemann-dash
+
+- name: Install Riemann 0.2.8
+  apt: deb={{ riemann_deb }}
+  tags:
+    - riemann
+    - riemann-dash
+
+- name: Install Riemann Gems
+  gem: name={{ item }} state=latest user_install=no
+  with_items: "{{ riemann_gems }}"
+  tags:
+    - riemann
+    - riemann-dash
+    - riemann-health
+
+- name: Stop Riemann
+  service: name=riemann state=stopped enabled=yes
+  tags:
+    - riemann
+    - riemann-dash
+
+- name: Copy Riemann Config Settings
+  template: src=riemann-config.j2
+            dest=/etc/riemann/riemann.config
+            mode=644
+  tags:
+    - riemann-dash
+
+- name: Copy LogRotate Configuration File - Riemann
+  template: src=logrotate/riemann-logrotate.conf.j2 dest="/etc/logrotate.d/riemann.conf" owner=root group=root mode=0644
+  tags:
+    - riemann-dash
+    - logrotate
+
+- name: Remove Riemann init.d Service
+  file: name="/etc/init.d/riemann" state=absent
+
+- name: Copy Upstart scripts - Riemann Dash
+  template: src=riemann-upstart.conf.j2
+            dest=/etc/init/riemann.conf
+            mode=644
+  tags:
+    - riemann
+    - upstart
+
+- name: Start Riemann
+  service: name=riemann state=started enabled=yes
+  tags:
+    - riemann
+    - riemann-dash
+
+- name: Ensure Riemann Dash directories exists
+  become_user: "{{ application_user }}"
+  file: path={{ item }}
+        state=directory
+        group={{ application_group }}
+        owner={{ application_user }}
+        mode=0755
+  with_items:
+    - "{{ riemann_dash_path }}"
+    - "{{ riemann_dash_path_log }}"
+    - "{{ riemann_dash_path_pid }}"
+  tags:
+    - riemann-dash
+
+
+- name: Copy Riemann Dash Config Settings
+  template: src=riemann-dash-config.rb.j2
+            dest={{ riemann_dash_config }}
+            mode=644
+  tags:
+    - riemann-dash
+
+- name: Copy Riemann Dash config.json Settings
+  template: src=riemann-dash-config.json.j2
+            dest="{{ riemann_dash_path }}/config.json"
+            mode=644
+  tags:
+    - riemann-dash
+
+- name: Copy Upstart scripts - Riemann Dash
+  template: src=riemann-dash-upstart.conf.j2
+            dest=/etc/init/riemann-dash.conf
+            mode=644
+  tags:
+    - riemann-dash
+    - upstart
+
+- name: Copy LogRotate Configuration File - Riemann Dash
+  template: src=logrotate/riemann-dash-logrotate.conf.j2 dest="/etc/logrotate.d/riemann-dash.conf" owner=root group=root mode=0644
+  tags:
+    - riemann-dash
+    - logrotate
+
+- name: Start Riemann Dash
+  service: name=riemann-dash state=started enabled=yes
+  tags:
+    - riemann-dash
+    - daemon
+
+- name: Ensure Riemann Health directories exists
+  become_user: "{{ application_user }}"
+  file: path={{ item }}
+        state=directory
+        group={{ application_group }}
+        owner={{ application_user }}
+        mode=0755
+  with_items:
+    - "{{ riemann_health_path }}"
+    - "{{ riemann_health_path_log }}"
+    - "{{ riemann_health_path_pid }}"
+  tags:
+    - riemann-health
+
+- name: Copy Upstart scripts - Riemann Health
+  template: src=riemann-health-upstart.conf.j2
+            dest=/etc/init/riemann-health.conf
+            mode=644
+  tags:
+    - riemann-health
+    - upstart
+
+- name: Copy LogRotate Configuration File - Riemann Health
+  template: src=logrotate/riemann-health-logrotate.conf.j2 dest="/etc/logrotate.d/riemann-health.conf" owner=root group=root mode=0644
+  tags:
+    - riemann-health
+    - logrotate
+
+- name: Start Riemann Heath
+  service: name=riemann-health state=started enabled=yes
+  tags:
+    - riemann-health
+    - daemon

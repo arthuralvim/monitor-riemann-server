@@ -1,0 +1,11 @@
+# {{ ansible_managed }}
+
+{{ riemann_path_log }}/*.log {
+    daily
+    rotate 180
+    compress
+    delaycompress
+    dateext
+    missingok
+    create 640 {{ application_username }} adm
+}

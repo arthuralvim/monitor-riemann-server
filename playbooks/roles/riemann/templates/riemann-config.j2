@@ -1,0 +1,42 @@
+; -*- mode: clojure; -*-
+; vim: filetype=clojure
+
+; {{ ansible_managed }}
+
+{% if riemann_use_influxdb %}
+; INFLUXDB SETTINGS
+
+(def influxdb-settings {
+    :version :0.9
+    :host "{{ riemann_influxdb_host }}"
+    :port {{ riemann_influxdb_port }}
+    :username "{{ riemann_influxdb_username }}"
+    :password "{{ riemann_influxdb_password }}"
+    :db "{{ riemann_influxdb_db }}"
+})
+
+(def influxdb-sender
+  (batch 100 1/10
+         (async-queue! :agg {:queue-size 1000
+                             :core-pool-size 1
+                             :max-pool-size 4
+                             :keep-alive-time 60000}
+                       (influxdb influxdb-settings))))
+{% endif %}
+
+(logging/init {:file "{{ riemann_path_log }}/riemann.log"})
+
+(let [host "{{ riemann_ip }}"]
+  (tcp-server {:host host})
+  (udp-server {:host host})
+  (ws-server  {:host host}))
+
+(periodically-expire {{ riemann_expire_index }})
+
+(let [index (index)]
+  (streams
+     index
+     #(info %)
+     {% if riemann_use_influxdb %}influxdb-sender{% endif %}
+    ))
+

@@ -1,0 +1,44 @@
+---
+
+riemann_packages:
+    - default-jre
+    - ruby-dev
+    - build-essential
+
+riemann_gems:
+    - sass
+    - riemann-client
+    - riemann-tools
+    - riemann-dash
+
+riemann_path: "{{ source_packages }}/riemann"
+riemann_path_log: "{{ riemann_path }}/riemann/logs"
+riemann_path_pid: "{{ riemann_path }}/riemann/pids"
+riemann_ip: "0.0.0.0"
+riemann_expire_index: 30
+riemann_dash_ws_port: "5556"
+
+riemann_version: "0.2.10"
+riemann_url: "https://aphyr.com/riemann/riemann_{{ riemann_version }}_all.deb"
+riemann_deb: "{{ riemann_path }}/riemann/riemann_{{ riemann_version }}.deb"
+
+riemann_dash_port: "4567"
+riemann_dash_ip: "0.0.0.0"
+
+riemann_dash_path: "{{ riemann_path }}/riemann-dash"
+riemann_dash_config: "{{ riemann_dash_path }}/config.rb"
+riemann_dash_path_log: "{{ riemann_dash_path }}/logs"
+riemann_dash_path_pid: "{{ riemann_dash_path }}/pids"
+
+riemann_health_host: "127.0.0.1"
+riemann_health_port: "5555"
+riemann_health_path: "{{ riemann_path }}/riemann-health"
+riemann_health_path_log: "{{ riemann_health_path }}/logs"
+riemann_health_path_pid: "{{ riemann_health_path }}/pids"
+
+riemann_use_influxdb: yes
+riemann_influxdb_host: "127.0.0.1"
+riemann_influxdb_port: 8086
+riemann_influxdb_username: "admin"
+riemann_influxdb_password: "password"
+riemann_influxdb_db: "riemann-data"

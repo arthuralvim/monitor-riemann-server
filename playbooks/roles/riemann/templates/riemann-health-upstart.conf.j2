@@ -1,0 +1,29 @@
+# {{ ansible_managed }}
+
+description "Upstart script for Riemann Health"
+version "1.0"
+author "Arthur Alvim <afmalvim@gmail.com>"
+
+start on filesystem or runlevel [2345]
+stop on shutdown
+
+setuid {{ application_user }}
+setgid {{ application_group }}
+
+script
+    cd {{ riemann_health_path }}
+    echo $$ > {{ riemann_health_path_pid }}/riemann-health.pid
+    exec /usr/local/bin/riemann-health --host {{ riemann_health_host }} --port {{ riemann_health_port }} >> {{ riemann_health_path_log }}/riemann-health.log 2>&1
+end script
+
+pre-start script
+    echo "[`date +"%Y-%m-%d %T"`] Riemann-Health Starting" >> {{ riemann_health_path_log }}/riemann-health.log
+end script
+
+pre-stop script
+    rm {{ riemann_health_path_pid }}/riemann-health.pid
+    echo "[`date +"%Y-%m-%d %T"`] Riemann-Health Stopping" >> {{ riemann_health_path_log }}/riemann-health.log
+end script
+
+respawn
+respawn limit 10 5

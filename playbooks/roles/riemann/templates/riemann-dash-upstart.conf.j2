@@ -1,0 +1,32 @@
+# {{ ansible_managed }}
+
+description "Upstart script for Riemann Dash"
+version "1.0"
+author "Arthur Alvim <afmalvim@gmail.com>"
+
+start on filesystem or runlevel [2345]
+stop on shutdown
+
+setuid {{ application_user }}
+setgid {{ application_group }}
+
+start on started riemann
+stop on stopped riemann
+
+script
+    cd {{ riemann_dash_path }}
+    echo $$ > {{ riemann_dash_path_pid }}/riemann-dash.pid
+    exec /usr/local/bin/riemann-dash >> {{ riemann_dash_path_log }}/riemann-dash.log 2>&1
+end script
+
+pre-start script
+    echo "[`date +"%Y-%m-%d %T"`] Riemann-Dash Starting" >> {{ riemann_dash_path_log }}/riemann-dash.log
+end script
+
+pre-stop script
+    rm {{ riemann_dash_path_pid }}/riemann-dash.pid
+    echo "[`date +"%Y-%m-%d %T"`] Riemann-Dash Stopping" >> {{ riemann_dash_path_log }}/riemann-dash.log
+end script
+
+respawn
+respawn limit 10 5

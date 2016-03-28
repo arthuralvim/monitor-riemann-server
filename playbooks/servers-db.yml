@@ -1,0 +1,17 @@
+---
+# file: servers-db.yml
+
+- name: Configure All Database Servers
+  hosts: db
+  gather_facts: yes
+  become: True
+
+  vars_files:
+    -  env_vars/keys.yml
+    -  env_vars/base.yml
+    -  env_vars/influxdb.yml
+
+  roles:
+    - {role: common, tags: ['common']}
+    - {role: base, tags: ['base']}
+    - {role: influxdb, tags: ['influxdb']}

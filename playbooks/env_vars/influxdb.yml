@@ -1,0 +1,6 @@
+---
+
+create_database: yes
+influxdb_db_name: influx_db_S36tLVWbgz
+influxdb_db_username: KSY1xnGVNLJPMiWlukc9
+influxdb_db_password: FWQdiUnMKxo4YhlgTH12

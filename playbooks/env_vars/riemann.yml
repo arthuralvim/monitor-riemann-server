@@ -1,0 +1,13 @@
+---
+
+influxdb_db_user: KSY1xnGVNLJPMiWlukc9
+influxdb_db_name: influx_db_S36tLVWbgz
+influxdb_db_password: FWQdiUnMKxo4YhlgTH12
+
+riemann_dash_ws_ip: "33.33.33.30"
+riemann_influxdb_host: "33.33.33.31"
+riemann_influxdb_port: 8086
+riemann_use_influxdb: yes
+riemann_influxdb_username: "{{ influxdb_db_user }}"
+riemann_influxdb_password: "{{ influxdb_db_password }}"
+riemann_influxdb_db: "{{ influxdb_db_name }}"

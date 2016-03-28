@@ -1,0 +1,22 @@
+---
+# file: servers-riemann.yml
+
+- name: Gather Data About Database Servers
+  hosts: db
+  gather_facts: yes
+
+- name: Configure All Riemann Servers
+  hosts: riemann
+  gather_facts: yes
+  become: yes
+
+  vars_files:
+    -  env_vars/base.yml
+    -  env_vars/keys.yml
+    -  env_vars/influxdb.yml
+    -  env_vars/riemann.yml
+
+  roles:
+    - {role: base, tags: ['base']}
+    - {role: riemann, tags: ['riemann']}
+    - {role: grafana, tags: ['grafana']}

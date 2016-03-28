@@ -1,0 +1,4 @@
+---
+
+# ssh_keys:
+#   - { user: "{{ application_username }}", key: "{{ lookup('file', '/path/to/.ssh/key.pub') }}"}

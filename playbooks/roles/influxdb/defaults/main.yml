@@ -1,0 +1,19 @@
+---
+
+influxdb_version: "0.9.6.1"
+influxdb_md5: "bd13fc5f21ec7f598b603f2a19b4005f"
+influxdb_url: "https://s3.amazonaws.com/influxdb/influxdb_{{ influxdb_version }}_amd64.deb"
+influxdb_dest: "{{ source_packages }}/influxdb"
+influxdb_deb: "{{ influxdb_dest }}/influxdb_{{ influxdb_version }}.deb"
+
+create_database: no
+
+influxdb_admin_username: "admin"
+influxdb_admin_password: "admin"
+
+influxdb_grafana_username: "grafana"
+influxdb_grafana_password: "grafana"
+
+influxdb_db_username: "admin"
+influxdb_db_password: "password"
+influxdb_db_name: "sample_database"

@@ -1,0 +1,23 @@
+---
+
+- name: Create InfluxDB Admin User
+  command: influx -database '{{ influxdb_db_name }}' -execute "CREATE USER {{ influxdb_admin_username }} WITH PASSWORD '{{ influxdb_admin_password }}' WITH ALL PRIVILEGES"
+  ignore_errors: yes
+
+- name: Create InfluxDB Database
+  command: influx -execute 'CREATE DATABASE {{ influxdb_db_name }}'
+  ignore_errors: yes
+
+- name: Create InfluxDB User for Riemann
+  command: influx -database '{{ influxdb_db_name }}' -execute "CREATE USER {{ influxdb_db_username }} WITH PASSWORD '{{ influxdb_db_password }}'"
+  ignore_errors: yes
+
+- name: Grant InfluxDB Database Permissions to the User
+  command: influx -database '{{ influxdb_db_name }}' -execute "GRANT ALL ON {{ influxdb_db_name }} TO {{ influxdb_db_username }}"
+
+- name: Create InfluxDB User for Grafana
+  command: influx -database '{{ influxdb_db_name }}' -execute "CREATE USER {{ influxdb_grafana_username }} WITH PASSWORD '{{ influxdb_grafana_password }}'"
+  ignore_errors: yes
+
+- name: Grant InfluxDB Database Read Permissions to Grafana's User
+  command: influx -database '{{ influxdb_db_name }}' -execute "GRANT READ ON {{ influxdb_db_name }} TO {{ influxdb_grafana_username }}"

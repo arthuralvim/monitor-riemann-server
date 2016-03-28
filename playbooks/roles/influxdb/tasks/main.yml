@@ -1,0 +1,16 @@
+---
+
+- name: Ensure InfluxDB directory exists
+  file: path={{ influxdb_dest }} state=directory
+
+- name: Download InfluxDB
+  get_url: url={{ influxdb_url }} dest={{ influxdb_deb }} checksum=md5:{{ influxdb_md5 }}
+
+- name: Install InfluxDB
+  apt: deb={{ influxdb_deb }}
+
+- name: Start InfluxDB
+  service: name=influxdb state=started enabled=yes
+
+- include: tasks/database.yml
+  when: create_database

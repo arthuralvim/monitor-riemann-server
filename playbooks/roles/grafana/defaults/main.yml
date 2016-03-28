@@ -1,0 +1,6 @@
+---
+
+grafana_base_path: "{{ source_packages }}/grafana"
+grafana_packages:
+    - apt-transport-https
+    - grafana

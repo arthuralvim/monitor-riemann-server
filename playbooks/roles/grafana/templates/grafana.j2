@@ -1,0 +1,37 @@
+# {{ ansible_managed }}
+
+app_mode = production
+
+[paths]
+data = /var/lib/grafana
+logs = /var/log/grafana
+
+[server]
+protocol = http
+http_addr = 127.0.0.1
+http_port = 3000
+
+domain = your-domain.com
+
+# make sure this matches server name and url, otherwise, github login will not work
+root_url = https://your-domain.com
+
+[database]
+type = sqlite3
+path = grafana.db
+
+[session]
+provider = file
+
+# ignore this if you are not going to use GitHub for authentication
+[auth.github]
+enabled = true
+allow_sign_up = true
+client_id = CLIENT_ID
+client_secret = CLIENT_SECRET
+scopes = user:email,read:org
+auth_url = https://github.com/login/oauth/authorize
+token_url = https://github.com/login/oauth/access_token
+api_url = https://api.github.com/user
+team_ids = YOUT_TEAM_IDS
+allowed_organizations = YOUR_ORGANIZATION

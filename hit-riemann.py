@@ -2,10 +2,23 @@
 
 from bernhard import Client as RiemannClient
 from decouple import config
+import collections
 import datetime
+import logging
 import random
 import string
-import collections
+
+LEVELS = {'DEBUG': logging.DEBUG,
+          'INFO': logging.INFO,
+          'WARNING': logging.WARNING,
+          'ERROR': logging.ERROR,
+          'CRITICAL': logging.CRITICAL}
+
+LOG_LEVEL = config('LOG_LEVEL', default='DEBUG')
+LOG_FILENAME = config('LOG_FILENAME', default='hit-riemann.log')
+logging.basicConfig(filename=LOG_FILENAME, level=logging.DEBUG)
+logger = logging.getLogger()
+logger.setLevel(LEVELS.get(LOG_LEVEL, logging.NOTSET))
 
 
 def lucky(threshold=0.5):
@@ -61,15 +74,16 @@ class EventRandom(GenerateRandom):
             metric = self.metric()
         return "{0} problems occurred.".format(metric)
 
-    def tags(self, size=1):
-        return self.choose_sample(self.event_tags, 3)
+    def tags(self, size=2):
+        return self.choose_sample(self.event_tags, size)
 
-    def event(self):
-        return Event(self.service(seq=self.number(maxi=4)),
+    def event(self, nr_services=1, nr_hosts=1):
+        metric = self.metric()
+        return Event(self.service(seq=self.number(maxi=nr_services)),
                      self.state(),
-                     self.host(seq=self.number(maxi=10)),
-                     self.metric(),
-                     self.description(),
+                     self.host(seq=self.number(maxi=nr_hosts)),
+                     metric,
+                     self.description(metric),
                      self.tags())
 
 
@@ -87,14 +101,17 @@ class RiemannPayload(object):
     def get_random_payload(self):
         return EventRandom().event()
 
-    def loop(self, verbose=False):
+    def loop(self, verbose=1):
         while True:
             if lucky():
                 event = self.get_random_payload()
-                if verbose:
+                if verbose != 1:
+                    logger.debug(event)
+                    print event
+                else:
                     print event
                 self.client.send(event._asdict())
 
 if __name__ == '__main__':
     rie = RiemannPayload()
-    rie.loop(True)
+    rie.loop(2)

@@ -85,15 +85,16 @@ class RiemannPayload(object):
         return self._client
 
     def get_random_payload(self):
-        evn = EventRandom().event()
-        return evn._asdict()
+        return EventRandom().event()
 
-    def loop(self):
+    def loop(self, verbose=False):
         while True:
             if lucky():
-                payload = self.get_random_payload()
-                self.client.send(payload)
+                event = self.get_random_payload()
+                if verbose:
+                    print event
+                self.client.send(event._asdict())
 
 if __name__ == '__main__':
     rie = RiemannPayload()
-    rie.loop()
+    rie.loop(True)
